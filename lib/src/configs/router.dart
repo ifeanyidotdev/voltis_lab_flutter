@@ -1,6 +1,7 @@
 import 'package:flutter_test_voltis/src/features/authentication/login_screen.dart';
 import 'package:flutter_test_voltis/src/features/authentication/sign_up_screen.dart';
 import 'package:flutter_test_voltis/src/features/dashboard/dashboard_screen.dart';
+import 'package:flutter_test_voltis/src/features/dashboard/product/product_detail_screen.dart';
 import 'package:go_router/go_router.dart';
 
 final routerConfig = GoRouter(
@@ -16,6 +17,10 @@ final routerConfig = GoRouter(
     GoRoute(
       path: DashboardScreen.routeName,
       builder: (context, state) => const DashboardScreen(),
+    ),
+    GoRoute(
+      path: ProductDetailScreen.routeName,
+      builder: (context, state) => const ProductDetailScreen(),
     ),
   ],
 );

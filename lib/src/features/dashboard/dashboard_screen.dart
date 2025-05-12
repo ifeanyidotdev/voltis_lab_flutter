@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test_voltis/src/data/models/shopping_model.dart';
 import 'package:flutter_test_voltis/src/data/source/local/shoping_data.dart';
+import 'package:flutter_test_voltis/src/features/dashboard/product/product_detail_screen.dart';
 import 'package:flutter_test_voltis/src/providers/theme_provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -29,13 +31,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
         title: Text("Wardrobe", style: theme.typography.headline),
         backgroundColor: theme.colors.background,
         actions: [
-          IconButton(
-            icon: SvgPicture.asset(
-              "assets/icons/menu_bar.svg",
-              colorFilter: ColorFilter.mode(theme.colors.text, BlendMode.srcIn),
-            ),
-            onPressed: () {
-              // Navigate to settings screen
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, _) {
+              return IconButton(
+                icon: SvgPicture.asset(
+                  "assets/icons/menu_bar.svg",
+                  colorFilter: ColorFilter.mode(
+                    theme.colors.text,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                onPressed: () {
+                  // Navigate to settings screen
+                  themeProvider.toggleTheme();
+                },
+              );
             },
           ),
         ],
@@ -54,9 +64,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     children: [
                       CircleAvatar(
                         radius: 35,
-                        // backgroundImage: NetworkImage(
-                        //   "https://images.unsplash.com/photo-1506794778169006916-0d0f7a0b3c4e",
-                        // ),
+                        backgroundImage: AssetImage(
+                          "assets/images/avater_one.png",
+                        ),
                       ),
                       const SizedBox(width: 10),
                       Column(
@@ -230,29 +240,32 @@ have any questions, please, reach out, thanks! """,
                   showContext = !showContext;
                 });
               },
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 10,
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      "Categories",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: theme.typography.body.fontFamily,
-                        color: theme.colors.textSecondary,
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 10,
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        "Categories",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: theme.typography.body.fontFamily,
+                          color: theme.colors.textSecondary,
+                        ),
                       ),
-                    ),
-                    const Spacer(),
-                    SvgPicture.asset(
-                      showContext
-                          ? "assets/icons/arrow_back.svg"
-                          : "assets/icons/arrow_down.svg",
-                    ),
-                  ],
+                      const Spacer(),
+                      SvgPicture.asset(
+                        showContext
+                            ? "assets/icons/arrow_back.svg"
+                            : "assets/icons/arrow_down.svg",
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -369,7 +382,7 @@ have any questions, please, reach out, thanks! """,
             ),
             SizedBox(height: 10),
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.5,
+              height: MediaQuery.of(context).size.height * 0.4,
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
@@ -612,153 +625,158 @@ have any questions, please, reach out, thanks! """,
   }) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final theme = themeProvider.currentTheme;
-    return SizedBox(
-      // height: 400,
-      // width: 180,
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              Container(
-                height: 226,
-                width: 166,
-                decoration: BoxDecoration(
-                  color: theme.colors.primary,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(7),
-                    topRight: Radius.circular(7),
-                    bottomLeft: Radius.circular(7),
-                    bottomRight: Radius.circular(7),
-                  ),
-                  image: DecorationImage(image: AssetImage(product.image)),
-                ),
-              ),
-              Positioned(
-                top: 10,
-                left: 120,
-                child: SvgPicture.asset(
-                  width: 25,
-                  "assets/icons/pin_icon.svg",
-                  colorFilter: ColorFilter.mode(
-                    theme.colors.text,
-                    BlendMode.srcIn,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 10,
-                left: 100,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: theme.colors.background,
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        width: 20,
-                        "assets/icons/heart_icon.svg",
-                        colorFilter: ColorFilter.mode(
-                          theme.colors.text,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                      SizedBox(width: 5),
-                      Text(
-                        product.likes,
-                        style: TextStyle(color: theme.colors.text),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 5),
-          SizedBox(
-            width: 166,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return GestureDetector(
+      onTap: () {
+        context.push(ProductDetailScreen.routeName);
+      },
+      child: SizedBox(
+        // height: 400,
+        // width: 180,
+        child: Column(
+          children: [
+            Stack(
               children: [
-                Text(
-                  product.brandName,
-                  style: TextStyle(
+                Container(
+                  height: 226,
+                  width: 166,
+                  decoration: BoxDecoration(
                     color: theme.colors.primary,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: theme.typography.body.fontFamily,
-                  ),
-                ),
-                Text(
-                  product.productName,
-                  style: TextStyle(
-                    color: theme.colors.text,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: theme.typography.body.fontFamily,
-                  ),
-                ),
-                Text(
-                  product.type,
-                  style: TextStyle(
-                    color: theme.colors.textSecondary,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: theme.typography.body.fontFamily,
-                  ),
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "${product.currency}${product.amount}",
-
-                      style: TextStyle(
-                        decoration:
-                            product.isDiscounted
-                                ? TextDecoration.lineThrough
-                                : null,
-                        decorationColor: theme.colors.text,
-                        color:
-                            product.isDiscounted
-                                ? theme.colors.textSecondary
-                                : theme.colors.text,
-                      ),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(7),
+                      topRight: Radius.circular(7),
+                      bottomLeft: Radius.circular(7),
+                      bottomRight: Radius.circular(7),
                     ),
-                    SizedBox(width: 8),
-                    if (product.isDiscounted) ...[
-                      Text(
-                        "${product.currency}${product.discountAmount}",
-                        style: TextStyle(color: theme.colors.text),
-                      ),
-                    ],
-                    SizedBox(width: 8),
-                    if (product.isDiscounted) ...[
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
+                    image: DecorationImage(image: AssetImage(product.image)),
+                  ),
+                ),
+                Positioned(
+                  top: 10,
+                  left: 120,
+                  child: SvgPicture.asset(
+                    width: 25,
+                    "assets/icons/pin_icon.svg",
+                    colorFilter: ColorFilter.mode(
+                      theme.colors.text,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 10,
+                  left: 100,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colors.background,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          width: 20,
+                          "assets/icons/heart_icon.svg",
+                          colorFilter: ColorFilter.mode(
+                            theme.colors.text,
+                            BlendMode.srcIn,
+                          ),
                         ),
-                        decoration: BoxDecoration(
-                          color: theme.colors.error,
-                          borderRadius: BorderRadius.circular(3),
+                        SizedBox(width: 5),
+                        Text(
+                          product.likes,
+                          style: TextStyle(color: theme.colors.text),
                         ),
-                        child: Row(
-                          children: [
-                            Text(
-                              "${product.discountPercentage}% off",
-                              style: TextStyle(color: theme.colors.text),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ],
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
+            SizedBox(height: 5),
+            SizedBox(
+              width: 166,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.brandName,
+                    style: TextStyle(
+                      color: theme.colors.primary,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: theme.typography.body.fontFamily,
+                    ),
+                  ),
+                  Text(
+                    product.productName,
+                    style: TextStyle(
+                      color: theme.colors.text,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: theme.typography.body.fontFamily,
+                    ),
+                  ),
+                  Text(
+                    product.type,
+                    style: TextStyle(
+                      color: theme.colors.textSecondary,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: theme.typography.body.fontFamily,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "${product.currency}${product.amount}",
+
+                        style: TextStyle(
+                          decoration:
+                              product.isDiscounted
+                                  ? TextDecoration.lineThrough
+                                  : null,
+                          decorationColor: theme.colors.text,
+                          color:
+                              product.isDiscounted
+                                  ? theme.colors.textSecondary
+                                  : theme.colors.text,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      if (product.isDiscounted) ...[
+                        Text(
+                          "${product.currency}${product.discountAmount}",
+                          style: TextStyle(color: theme.colors.text),
+                        ),
+                      ],
+                      SizedBox(width: 8),
+                      if (product.isDiscounted) ...[
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: theme.colors.error,
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                "${product.discountPercentage}% off",
+                                style: TextStyle(color: theme.colors.text),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

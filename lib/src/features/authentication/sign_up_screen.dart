@@ -15,6 +15,13 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -48,6 +55,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Column(
                   children: [
                     TextFormField(
+                      controller: _usernameController,
                       decoration: InputDecoration(
                         labelText: "Enter Username",
                         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -66,6 +74,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(height: 15),
                     TextFormField(
+                      controller: _emailController,
                       decoration: InputDecoration(
                         labelText: "Enter Email",
                         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -84,6 +93,46 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(height: 15),
                     TextFormField(
+                      controller: _firstNameController,
+                      decoration: InputDecoration(
+                        labelText: "Enter First Name",
+                        floatingLabelBehavior: FloatingLabelBehavior.never,
+                        border: OutlineInputBorder(),
+                        focusColor: theme.colors.primary,
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: theme.colors.primary),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your firstname';
+                        }
+                        return null;
+                      },
+                    ),
+
+                    const SizedBox(height: 15),
+                    TextFormField(
+                      controller: _firstNameController,
+                      decoration: InputDecoration(
+                        labelText: "Enter Last Name",
+                        floatingLabelBehavior: FloatingLabelBehavior.never,
+                        border: OutlineInputBorder(),
+                        focusColor: theme.colors.primary,
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: theme.colors.primary),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your lastname';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 15),
+                    TextFormField(
+                      controller: _passwordController,
                       decoration: InputDecoration(
                         labelText: "Enter Password",
                         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -97,6 +146,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your password';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 15),
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                      decoration: InputDecoration(
+                        labelText: "Enter Confirm Password",
+                        floatingLabelBehavior: FloatingLabelBehavior.never,
+                        border: OutlineInputBorder(),
+                        focusColor: theme.colors.primary,
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: theme.colors.primary),
+                        ),
+                      ),
+                      obscureText: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your confirm password';
+                        }
+                        if (value != _passwordController.text) {
+                          return 'Passwords do not match';
                         }
                         return null;
                       },
@@ -125,7 +197,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-
                 children: [
                   Text(
                     "Own an account?",
