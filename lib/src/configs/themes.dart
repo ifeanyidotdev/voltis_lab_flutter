@@ -39,7 +39,7 @@ class AppColors {
     text: Colors.white,
     textSecondary: Color(0xFF979797),
     accent: const Color(0xFF03DAC6),
-    error: Colors.redAccent,
+    error: Colors.red,
   );
 }
 

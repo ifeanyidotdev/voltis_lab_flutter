@@ -3,8 +3,8 @@ import 'package:flutter_test_voltis/src/configs/themes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  AppTheme _currentTheme = AppTheme.light();
-  bool _isDarkMode = false;
+  AppTheme _currentTheme = AppTheme.dark();
+  bool _isDarkMode = true;
 
   AppTheme get currentTheme => _currentTheme;
   bool get isDarkMode => _isDarkMode;
