@@ -1,15 +1,12 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class GraphQlConfig {
-  static const String endpoint = 'https://your-graphql-endpoint.com/graphql';
-
   static HttpLink httpLink = HttpLink(
-    endpoint,
-    defaultHeaders: {"Cache-Control": "no-cache", "Pragma": "no-cache"},
+    "https://graphql-auth-eta.vercel.app/api/v1/graphql/",
   );
-  Future<GraphQLClient> clientToQuery({String? token}) async {
+  GraphQLClient clientToQuery({String? token}) {
     if (token != null && token.isNotEmpty) {
-      final AuthLink authLink = AuthLink(getToken: () async => 'Bearer $token');
+      final AuthLink authLink = AuthLink(getToken: () => 'Bearer $token');
       final Link link = authLink.concat(httpLink);
       return GraphQLClient(
         link: link,
@@ -17,7 +14,11 @@ class GraphQlConfig {
         queryRequestTimeout: Duration(seconds: 15),
       );
     } else {
-      return GraphQLClient(link: httpLink, cache: GraphQLCache());
+      return GraphQLClient(
+        link: httpLink,
+        cache: GraphQLCache(),
+        queryRequestTimeout: Duration(seconds: 15),
+      );
     }
   }
 }

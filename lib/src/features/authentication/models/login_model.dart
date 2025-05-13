@@ -7,7 +7,7 @@ class LoginModel {
   final bool? use2fa;
   final bool? success;
   final UserModel? user;
-  final List<dynamic>? errors;
+  final dynamic errors;
   LoginModel({
     this.token,
     this.refreshToken,

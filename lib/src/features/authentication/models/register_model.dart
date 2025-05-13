@@ -1,5 +1,5 @@
 class RegisterModel {
-  final List<dynamic>? errors;
+  final dynamic errors;
   final bool? success;
   final String? token;
   final String? refreshToken;

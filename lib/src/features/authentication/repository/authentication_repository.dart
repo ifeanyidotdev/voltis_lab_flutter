@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_test_voltis/src/configs/graphql.dart';
 import 'package:flutter_test_voltis/src/data/models/response_model.dart';
 import 'package:flutter_test_voltis/src/features/authentication/models/login_model.dart';
@@ -33,7 +35,7 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
     required String password,
   }) async {
     try {
-      GraphQLClient client = await _graphQlConfig.clientToQuery();
+      GraphQLClient client = _graphQlConfig.clientToQuery();
       const String request = r"""
           mutation Login($password:String!, $email:String!){
             login(password:$password,email:$email) {
@@ -64,6 +66,7 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
         ),
       );
       if (result.hasException) {
+        log("EXCEPTION: ${result.exception.toString()}");
         return Result(
           response: ResponseError(
             message: result.exception?.graphqlErrors.first.message,
@@ -71,8 +74,8 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
           ),
         );
       }
-      final data = result.data!['login'];
-      _authToken = data['token'];
+      log("DATA_RECEIVED: ${result.data}");
+      // _authToken = data['token'];
       return Result(
         response: ResponseSuccess<LoginModel>.fromJson(
           result.data!,
@@ -97,7 +100,7 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
     required String password2,
   }) async {
     try {
-      GraphQLClient client = await _graphQlConfig.clientToQuery();
+      GraphQLClient client = _graphQlConfig.clientToQuery();
       const String request = r'''
       mutation RegisterUser(
         $displayName: String
@@ -117,10 +120,10 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
           password1: $password1
           password2: $password2
         ) {
-         errors
-          token
           refreshToken
+          token
           success
+          errors
         }
       }
     ''';
@@ -129,7 +132,7 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
           document: gql(request),
           fetchPolicy: FetchPolicy.noCache,
           variables: {
-            "displayName": displayName,
+            "displayName": username,
             "email": email,
             "username": username,
             "firstName": firstName,
@@ -141,22 +144,38 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
       );
 
       if (result.hasException) {
+        log("EXCEPTION: ${result.exception.toString()}");
         return Result(
           response: ResponseError(
             message: result.exception?.graphqlErrors.first.message,
-            errors: result.exception?.graphqlErrors,
+            // errors: result.exception?.graphqlErrors,
           ),
         );
       }
+      log("DATA_RECEIVED: ${result.data}");
       final data = result.data!['register'];
-      _authToken = data['token']; // optional if you store token
-      return Result(
-        response: ResponseSuccess<RegisterModel>.fromJson(
-          result.data!,
-          (data) => RegisterModel.fromJson(data),
-          "register",
-        ),
-      );
+      if (data['success'] == false) {
+        final errors = data?['errors'] as Map<String, dynamic>?;
+        // Collect all error messages into one string
+        final errorMessages =
+            errors?.entries.map((entry) => '${entry.value.join(", ")}').first;
+        // .join("\n");
+        return Result(
+          response: ResponseError(
+            message: errorMessages ?? "Registration failed",
+            success: false,
+          ),
+        );
+      } else {
+        // _authToken = data['token']; // optional if you store token
+        return Result(
+          response: ResponseSuccess<RegisterModel>.fromJson(
+            result.data!,
+            (data) => RegisterModel.fromJson(data),
+            "register",
+          ),
+        );
+      }
     } catch (e) {
       print(e.toString());
       return Result(response: ResponseError(message: e.toString()));

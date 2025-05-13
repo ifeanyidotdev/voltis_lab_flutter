@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_test_voltis/src/features/authentication/provider/authentication_provider.dart';
 import 'package:flutter_test_voltis/src/features/authentication/sign_up_screen.dart';
 import 'package:flutter_test_voltis/src/features/dashboard/dashboard_screen.dart';
 import 'package:flutter_test_voltis/src/providers/theme_provider.dart';
@@ -16,6 +19,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -49,6 +54,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   children: [
                     TextFormField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      autofillHints: [AutofillHints.email],
+                      autocorrect: false,
+                      style: TextStyle(
+                        fontFamily: theme.typography.body.fontFamily,
+                        color: theme.colors.text,
+                      ),
                       decoration: InputDecoration(
                         labelText: "Enter Email",
                         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -67,6 +80,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 15),
                     TextFormField(
+                      controller: _passwordController,
+                      autocorrect: false,
+                      style: TextStyle(
+                        fontFamily: theme.typography.body.fontFamily,
+                        color: theme.colors.text,
+                      ),
                       decoration: InputDecoration(
                         labelText: "Enter Password",
                         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -107,14 +126,63 @@ class _LoginScreenState extends State<LoginScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: 300,
-                    child: AppButton(
-                      text: 'Login',
-                      onPressed: () {
-                        context.pushReplacement(DashboardScreen.routeName);
-                      },
-                    ),
+                  Consumer<AuthenticationProvider>(
+                    builder: (context, authProvider, _) {
+                      return SizedBox(
+                        width: 300,
+                        child: AppButton(
+                          text: authProvider.isLoading ? "Loading..." : 'Login',
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              // Perform signin action
+
+                              await authProvider.signIn(
+                                email: _emailController.text.toString(),
+                                password: _passwordController.text.toString(),
+                              );
+                              if (authProvider.isError) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: theme.colors.error,
+                                    duration: const Duration(seconds: 3),
+                                    content: Text(
+                                      authProvider.errorResponse?.message ??
+                                          'An error occurred',
+                                      style: TextStyle(
+                                        fontFamily:
+                                            theme.typography.body.fontFamily,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Signin successful',
+                                      style: TextStyle(
+                                        fontFamily:
+                                            theme.typography.body.fontFamily,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                                context.pushReplacement(
+                                  DashboardScreen.routeName,
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

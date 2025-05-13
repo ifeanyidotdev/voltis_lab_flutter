@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test_voltis/src/features/authentication/login_screen.dart';
+import 'package:flutter_test_voltis/src/features/authentication/provider/authentication_provider.dart';
 import 'package:flutter_test_voltis/src/providers/theme_provider.dart';
 import 'package:flutter_test_voltis/src/system/ui/app_button.dart';
 import 'package:go_router/go_router.dart';
@@ -55,7 +56,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Column(
                   children: [
                     TextFormField(
+                      style: TextStyle(
+                        fontFamily: theme.typography.body.fontFamily,
+                        color: theme.colors.text,
+                      ),
                       controller: _usernameController,
+
+                      autocorrect: false,
                       decoration: InputDecoration(
                         labelText: "Enter Username",
                         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -74,6 +81,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(height: 15),
                     TextFormField(
+                      style: TextStyle(
+                        fontFamily: theme.typography.body.fontFamily,
+
+                        color: theme.colors.text,
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      autofillHints: [AutofillHints.email],
+                      autocorrect: false,
                       controller: _emailController,
                       decoration: InputDecoration(
                         labelText: "Enter Email",
@@ -93,7 +108,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(height: 15),
                     TextFormField(
+                      style: TextStyle(
+                        fontFamily: theme.typography.body.fontFamily,
+
+                        color: theme.colors.text,
+                      ),
                       controller: _firstNameController,
+                      autocorrect: false,
                       decoration: InputDecoration(
                         labelText: "Enter First Name",
                         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -113,7 +134,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     const SizedBox(height: 15),
                     TextFormField(
-                      controller: _firstNameController,
+                      style: TextStyle(
+                        fontFamily: theme.typography.body.fontFamily,
+
+                        color: theme.colors.text,
+                      ),
+                      controller: _lastNameController,
+                      autocorrect: false,
                       decoration: InputDecoration(
                         labelText: "Enter Last Name",
                         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -132,7 +159,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(height: 15),
                     TextFormField(
+                      style: TextStyle(
+                        fontFamily: theme.typography.body.fontFamily,
+
+                        color: theme.colors.text,
+                      ),
                       controller: _passwordController,
+                      autocorrect: false,
                       decoration: InputDecoration(
                         labelText: "Enter Password",
                         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -152,7 +185,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(height: 15),
                     TextFormField(
+                      style: TextStyle(
+                        fontFamily: theme.typography.body.fontFamily,
+                        color: theme.colors.text,
+                      ),
                       controller: _confirmPasswordController,
+                      autocorrect: false,
                       decoration: InputDecoration(
                         labelText: "Enter Confirm Password",
                         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -181,14 +219,71 @@ class _SignUpScreenState extends State<SignUpScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: 300,
-                    child: AppButton(
-                      text: 'Signup',
-                      onPressed: () {
-                        context.pushReplacement(LoginScreen.routeName);
-                      },
-                    ),
+                  Consumer<AuthenticationProvider>(
+                    builder: (context, authProvider, _) {
+                      return SizedBox(
+                        width: 300,
+                        child: AppButton(
+                          text:
+                              authProvider.isLoading ? "Loading..." : 'Signup',
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              // Perform signup action
+                              await authProvider.signUp(
+                                email: _emailController.text.toString(),
+                                password: _passwordController.text.toString(),
+                                confirmPassword:
+                                    _confirmPasswordController.text.toString(),
+                                username: _usernameController.text.toString(),
+                                firstname: _firstNameController.text.toString(),
+                                lastname: _lastNameController.text.toString(),
+                              );
+                              if (authProvider.isError) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: theme.colors.error,
+                                    duration: const Duration(seconds: 3),
+                                    content: Text(
+                                      authProvider.errorResponse?.message ??
+                                          'An error occurred',
+                                      style: TextStyle(
+                                        fontFamily:
+                                            theme.typography.body.fontFamily,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                if (authProvider.isSuccess) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      duration: Duration(seconds: 3),
+                                      content: Text(
+                                        'Signup successful',
+                                        style: TextStyle(
+                                          fontFamily:
+                                              theme.typography.body.fontFamily,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                  context.pushReplacement(
+                                    LoginScreen.routeName,
+                                  );
+                                }
+                              }
+                            }
+                          },
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

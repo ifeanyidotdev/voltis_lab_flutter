@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test_voltis/src/data/models/response_model.dart';
 import 'package:flutter_test_voltis/src/features/authentication/models/login_model.dart';
@@ -40,6 +42,7 @@ class AuthenticationProvider extends ChangeNotifier {
 
   Future<void> signIn({required String email, required String password}) async {
     try {
+      clear();
       setLoading(true);
       Result<dynamic> result = await authRepository.login(
         email: email,
@@ -47,7 +50,7 @@ class AuthenticationProvider extends ChangeNotifier {
       );
       if (result.response is ResponseError) {
         errorResponse = result.response as ResponseError;
-        print("ERROR: ${errorResponse?.errors.toString()}");
+        log("ERROR: ${errorResponse?.message.toString()}");
         setError(true);
         setLoading(false);
         notifyListeners();
@@ -62,7 +65,7 @@ class AuthenticationProvider extends ChangeNotifier {
       notifyListeners();
       return;
     } catch (error) {
-      print("ERROR: ${error.toString()}");
+      log("ERROR: ${error.toString()}");
       errorResponse = ResponseError(message: error.toString());
       setError(true);
       setLoading(false);
@@ -80,11 +83,12 @@ class AuthenticationProvider extends ChangeNotifier {
     required String confirmPassword,
   }) async {
     try {
+      clear();
       setLoading(true);
       Result<dynamic> result = await authRepository.register(
+        email: email,
         displayName: username,
         username: username,
-        email: email,
         firstName: firstname,
         lastName: lastname,
         password1: password,
@@ -92,7 +96,7 @@ class AuthenticationProvider extends ChangeNotifier {
       );
       if (result.response is ResponseError) {
         errorResponse = result.response as ResponseError;
-        print("ERROR: ${errorResponse?.errors.toString()}");
+        log("ERROR: ${errorResponse?.message.toString()}");
         setError(true);
         setLoading(false);
         notifyListeners();
@@ -100,18 +104,28 @@ class AuthenticationProvider extends ChangeNotifier {
       }
       successResponse = result.response as ResponseSuccess;
       registerResponse = successResponse!.data as RegisterModel;
-      await store.setString('token', registerResponse!.token!);
-      await store.setString('refreshToken', registerResponse!.refreshToken!);
+      // await store.setString('token', registerResponse!.token!);
+      // await store.setString('refreshToken', registerResponse!.refreshToken!);
       setSuccess(true);
       setLoading(false);
       notifyListeners();
       return;
     } catch (error) {
-      print("ERROR: ${error.toString()}");
+      log("ERROR: ${error.toString()}");
       errorResponse = ResponseError(message: error.toString());
       setError(true);
       setLoading(false);
       notifyListeners();
     }
+  }
+
+  void clear() {
+    successResponse = null;
+    errorResponse = null;
+    loginResponse = null;
+    registerResponse = null;
+    _isLoading = false;
+    _isError = false;
+    _isSuccess = false;
   }
 }
