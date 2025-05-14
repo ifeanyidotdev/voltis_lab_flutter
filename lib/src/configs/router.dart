@@ -1,11 +1,16 @@
-import 'package:flutter_test_voltis/src/features/authentication/login_screen.dart';
-import 'package:flutter_test_voltis/src/features/authentication/sign_up_screen.dart';
+import 'package:flutter_test_voltis/src/features/authentication/screens/login_screen.dart';
+import 'package:flutter_test_voltis/src/features/authentication/screens/sign_up_screen.dart';
 import 'package:flutter_test_voltis/src/features/dashboard/dashboard_screen.dart';
 import 'package:flutter_test_voltis/src/features/dashboard/product/product_detail_screen.dart';
+import 'package:flutter_test_voltis/src/features/middleware/auth_middleware_screen.dart';
 import 'package:go_router/go_router.dart';
 
 final routerConfig = GoRouter(
   routes: <RouteBase>[
+    GoRoute(
+      path: AuthMiddlewareScreen.routeName,
+      builder: (context, state) => const AuthMiddlewareScreen(),
+    ),
     GoRoute(
       path: LoginScreen.routeName,
       builder: (context, state) => const LoginScreen(),

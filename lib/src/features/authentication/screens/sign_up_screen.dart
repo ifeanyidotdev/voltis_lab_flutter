@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_test_voltis/src/features/authentication/login_screen.dart';
+import 'package:flutter_test_voltis/src/features/authentication/screens/login_screen.dart';
 import 'package:flutter_test_voltis/src/features/authentication/provider/authentication_provider.dart';
 import 'package:flutter_test_voltis/src/providers/theme_provider.dart';
 import 'package:flutter_test_voltis/src/system/ui/app_button.dart';

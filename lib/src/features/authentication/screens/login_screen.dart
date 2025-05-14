@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test_voltis/src/features/authentication/provider/authentication_provider.dart';
-import 'package:flutter_test_voltis/src/features/authentication/sign_up_screen.dart';
+import 'package:flutter_test_voltis/src/features/authentication/screens/sign_up_screen.dart';
 import 'package:flutter_test_voltis/src/features/dashboard/dashboard_screen.dart';
 import 'package:flutter_test_voltis/src/providers/theme_provider.dart';
 import 'package:flutter_test_voltis/src/system/ui/app_button.dart';
@@ -10,7 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
-  static const String routeName = '/';
+  static const String routeName = '/login';
   const LoginScreen({super.key});
 
   @override

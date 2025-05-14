@@ -119,6 +119,12 @@ class AuthenticationProvider extends ChangeNotifier {
     }
   }
 
+  bool get isAuthenticated {
+    final String? token = store.getString('token');
+    final String? refreshToken = store.getString('refreshToken');
+    return token != null && refreshToken != null;
+  }
+
   void clear() {
     successResponse = null;
     errorResponse = null;

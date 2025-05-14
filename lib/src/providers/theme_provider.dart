@@ -12,10 +12,10 @@ class ThemeProvider extends ChangeNotifier {
   void toggleTheme() {
     _isDarkMode = !_isDarkMode;
     _currentTheme = _isDarkMode ? AppTheme.dark() : AppTheme.light();
+    saveThemePreference();
     notifyListeners();
   }
 
-  // Optional: Persist theme
   void loadThemeFromPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     _isDarkMode = prefs.getBool('isDarkMode') ?? false;
